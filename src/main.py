@@ -9,7 +9,7 @@ load_dotenv()
 
 SPOTIFY_CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
 SPOTIFY_CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET")
-SPOTIFY_ARTIST_ID = "30Yst1sldseUyWpZ7ldDIP"
+SPOTIFY_ARTIST_ID = "ARTIST_ID"
 auth_str = f"{SPOTIFY_CLIENT_ID}:{SPOTIFY_CLIENT_SECRET}"
 b64_auth_str = base64.b64encode(auth_str.encode()).decode()
 headers = {"Authorization": f"Basic {b64_auth_str}"}
