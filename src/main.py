@@ -1,7 +1,6 @@
 import discord
 import requests
 from discord.ext import commands,tasks
-import logging
 from dotenv import load_dotenv
 import os
 import base64
@@ -16,17 +15,13 @@ b64_auth_str = base64.b64encode(auth_str.encode()).decode()
 headers = {"Authorization": f"Basic {b64_auth_str}"}
 
 last_seen_track = None
-CHANNEL_ID = 826984818852102165 #This is the announcements channel
-TARGET_USER_ID = 852668203045748756 #Rukens user ID
-TEST_USER_ID = 776164869451546655 #My user ID
-TARGET_USER_ID2 = 825108711537770546 #Somename user ID
-message_count = 0
-response_frequency = 10
 
+CHANNEL_ID_INT = int(os.getenv('ANNOUNCEMENT_CHANNEL_ID'))
+MEMBER_ROLE_ID_INT = int(os.getenv('MEMBER_ROLE_ID'))
 
 token = os.getenv('DISCORD_TOKEN')
 
-handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
+
 intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True
@@ -45,7 +40,6 @@ async def on_member_join(member):
 
 @bot.event
 async def on_message(message):
-    global message_count
     if message.author.bot:
         return
 
@@ -54,8 +48,7 @@ async def on_message(message):
 
 @bot.command()
 async def assign(ctx):
-    role_id = 1342595675841626184  # your role ID
-    role_assign = ctx.guild.get_role(role_id)
+    role_assign = ctx.guild.get_role(MEMBER_ROLE_ID_INT)
 
     if role_assign is None:
         await ctx.send("Role doesn't exist.")
@@ -67,15 +60,14 @@ async def assign(ctx):
 
     await ctx.author.add_roles(role_assign)
     await ctx.send(
-        f"{ctx.author.mention} has been given the <@&{role_id}> role.",
+        f"{ctx.author.mention} has been given the <@&{MEMBER_ROLE_ID_INT}> role.",
         allowed_mentions=discord.AllowedMentions(roles=False)
     )
 
 
 @bot.command()
 async def remove(ctx):
-    role_id = 1342595675841626184  # your role ID
-    role_assign = ctx.guild.get_role(role_id)
+    role_assign = ctx.guild.get_role(MEMBER_ROLE_ID_INT)
 
     if role_assign is None:
         await ctx.send("Role doesn't exist.")
@@ -87,7 +79,7 @@ async def remove(ctx):
 
     await ctx.author.remove_roles(role_assign)
     await ctx.send(
-        f"{ctx.author.mention} has had the <@&{role_id}> role removed.",
+        f"{ctx.author.mention} has had the <@&{MEMBER_ROLE_ID_INT}> role removed.",
         allowed_mentions=discord.AllowedMentions(roles=False)
     )
 
@@ -148,16 +140,15 @@ async def check_new_drop():
 
     if last_seen_track is None or latest_album["id"] != last_seen_track:
         last_seen_track = latest_album["id"]
-        channel = await bot.fetch_channel(CHANNEL_ID)
+        channel = await bot.fetch_channel(CHANNEL_ID_INT)
         if channel:
-            role_id = 1342595675841626184
             await channel.send(
-                f"<@&{role_id}> 🎶 **{track_name}** just dropped!\n{track_url}",
+                f"<@&{MEMBER_ROLE_ID_INT}> 🎶 **{track_name}** just dropped!\n{track_url}",
                 allowed_mentions=discord.AllowedMentions(roles=True)
             )
 
 @bot.command()
-@commands.has_role(1342595675841626184)
+@commands.has_role(MEMBER_ROLE_ID_INT)
 async def secret(ctx):
     await ctx.send("You have a secret role :)")
 
@@ -167,4 +158,4 @@ async def secret_error(ctx, error):
         await ctx.send("You do not have permission to do that!")
 
 
-bot.run(token, log_handler=handler, log_level=logging.DEBUG)
+bot.run(token)
