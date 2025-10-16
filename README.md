@@ -3,7 +3,7 @@ This project is a Python-based Discord Bot developed to automate common server t
 
 ## Core Technical Implementation:
 
-Asynchronous Architecture: Implemented Python's native asyncio library to manage concurrent I/O operations and efficiently handle over 300+ real-time events per minute, ensuring low latency for user commands.
+Asynchronous Architecture: Implemented Python's native asyncio library to manage concurrent I/O operations and efficiently handle real-time events for user commands.
 
 Event-Driven Design: Built around event-driven command handling to structure the application logic, allowing for reliable task automation and easy expansion of future commands.
 
